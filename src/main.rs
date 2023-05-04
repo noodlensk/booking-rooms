@@ -3,7 +3,6 @@ use prettytable::{Cell, Row, Table};
 use std::{collections::HashMap, env, error::Error};
 
 mod api;
-// use crate::api::{ROOM_1_GUID, ROOM_2_GUID};
 use api::Client;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -27,7 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         Err(_) => return Err("BOOKING_ROOMS environment variable not set".into()),
     };
 
-    let booking_rooms_parsed = booking_rooms.split(",");
+    let booking_rooms_parsed = booking_rooms.split(',');
 
     let client = Client::new(url, user, password);
 
@@ -82,8 +81,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                 })
                 .as_str(),
             ),
-            Cell::new(format!("{}", if room_1_is_available { "✅" } else { "❌" }).as_str()),
-            Cell::new(format!("{}", if room_2_is_available { "✅" } else { "❌" }).as_str()),
+            Cell::new(
+                (if room_1_is_available { "✅" } else { "❌" })
+                    .to_string()
+                    .as_str(),
+            ),
+            Cell::new(
+                (if room_2_is_available { "✅" } else { "❌" })
+                    .to_string()
+                    .as_str(),
+            ),
         ]));
     }
 

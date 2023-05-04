@@ -1,10 +1,8 @@
-use chrono::DateTime;
-use chrono::Local;
+use chrono::{DateTime, Local};
+use reqwest::{blocking::Client as reqwestClient, header as reqwestHeader};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use url::{ParseError, Url};
-
-use serde::Deserialize;
-use serde::Serialize;
 
 #[derive(Debug)]
 pub struct Availability {
@@ -17,7 +15,7 @@ pub struct Client {
     user: String,
     password: String,
 
-    client: reqwest::blocking::Client,
+    client: reqwestClient,
 }
 
 impl Client {
@@ -37,8 +35,8 @@ impl Client {
             .client
             .get(query_url)
             .basic_auth(self.user.as_str(), Some(self.password.as_str()))
-            .header("accept", "application/json")
-            .header("content-type", "application/json, application/json")
+            .header(reqwestHeader::ACCEPT, "application/json")
+            .header(reqwestHeader::CONTENT_TYPE, "application/json")
             .send()?
             .json()?;
 
@@ -50,7 +48,7 @@ impl Client {
             url,
             user,
             password,
-            client: reqwest::blocking::Client::new(),
+            client: reqwestClient::new(),
         }
     }
 
@@ -81,7 +79,7 @@ impl Client {
     }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 struct GetAvailabilityResponse {
     #[serde(rename = "Resource")]
     pub resource: Resource,
